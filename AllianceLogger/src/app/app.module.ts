@@ -1,6 +1,3 @@
-import { LogsService } from './logs.service';
-import { DatePipe } from '@angular/common';
-
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule} from '@angular/forms';
@@ -63,7 +60,6 @@ import { LogDisplayStickyComponent } from './components/log-display-sticky/log-d
     MatDialogModule
   ],
   providers: [
-    LogsService
   ],
   bootstrap: [AppComponent]
 })

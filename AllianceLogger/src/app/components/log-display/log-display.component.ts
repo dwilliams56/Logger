@@ -1,4 +1,4 @@
-import { LogsService } from './../../logs.service';
+import { PostLogsService } from './../../../../services/post-logs.service';
 import { HttpClient } from '@angular/common/http';
 import {SelectionModel} from '@angular/cdk/collections';
 import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
@@ -32,13 +32,15 @@ export class LogDisplayComponent implements OnInit, AfterViewInit {
   selection = new SelectionModel<Log>(true, []);
   private startDate: Date = new Date();
   private endDate: Date = new Date();
+
+ 
  
  
   @ViewChild(MatPaginator, {static: true}) paginator!: MatPaginator;
   @ViewChild(MatSort, {static: true}) sort!: MatSort;
   
   // constructor(private service: LogsService) {}
-    constructor(private http: HttpClient ) {}
+    constructor(private http: HttpClient, private service: PostLogsService ) {}
 
   ngOnInit(): void {
     this.fetchLogs()
@@ -49,11 +51,13 @@ export class LogDisplayComponent implements OnInit, AfterViewInit {
     
   }
 
+  
+
   fetchLogs(): void {
-    this.http.get('https://api.jsonbin.io/b/6250885bd20ace068f959856/13').subscribe((data) => {
+    this.http.get<any>('https://api.jsonbin.io/b/6250885bd20ace068f959856/13').subscribe((data) => {
       this.dataSource.data = data as Log[];
     })
-    this.http.get('https://api.jsonbin.io/b/6250885bd20ace068f959856/13').subscribe((data) => {
+    this.http.get<any>('https://api.jsonbin.io/b/6250885bd20ace068f959856/13').subscribe((data) => {
       this.copyDataSource.data = data as Log[];
     })
   }
@@ -73,7 +77,6 @@ export class LogDisplayComponent implements OnInit, AfterViewInit {
     }
   }
 
-
   //SELECT 
   /** Whether the number of selected elements matches the total number of rows. */
   isAllSelected() {
@@ -81,6 +84,25 @@ export class LogDisplayComponent implements OnInit, AfterViewInit {
     const numRows = this.dataSource.data.length;
     return numSelected === numRows;
   }
+
+  deleteSelected(){
+    var logs = [];
+    var id = [];
+    var size;
+    logs = this.selection.selected;
+    size = logs.length
+    for(let i = 0; i < size ; i++){
+      id[i] = this.getLogIdArray(logs[i])
+    }
+    this.service.deleteLogs(id);
+    console.log(id);
+   //this.service.deleteLogs(id);
+  }
+
+  getLogIdArray(logId: Log){
+    return logId.logID;
+  }
+  
 
   /** Selects all rows if they are not all selected; otherwise clear selection. */
   masterToggle() {
